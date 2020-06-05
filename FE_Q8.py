@@ -1,40 +1,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+h=0.1
+a=0
+b=1
+n=int(1+(b-a)/h)
 
-h=0.01
-t1=10
-g=10
-n=int(1+(t1/h))
+x=np.linspace(a,b,n)
+y=np.zeros(n)
+ytr=np.zeros(n)
+y1=np.zeros(n)
+y2=np.zeros(n)
+ya=0
+yb=2
 
-def f2(x,f1,t):
-    return np.array([f1,-g])    #array of function of 1st and 2nd derivative
+def ftrue(x):
+    return np.exp(2)/(np.exp(4)-1)*(np.exp(2*x)-np.exp(-2*x))+x
 
-def x_true(t):
-    return 5*(-t*t+t1*t)        #true function
+def f(x,y,y1):
+    return np.array([y1,4*(y-x)])
 
-
-t=np.linspace(0,t1,n)   
-x=np.zeros(n)
-f1=np.zeros(n)
+for i in range(n):
+    ytr[i]=ftrue(x[i])
 
 
-xtr=x_true(t)
-plt.plot(t,xtr,'y',label='True Function')
-
-x[0]=0
-for j in range(8):              #calculating overshoot/undershoot for 8 different initial values of f1
-    f1[0]=g*t1/2*(0.9+j*0.03)   #different initial values of f1
+for j in range(8):
+    y1[0]=1+j*0.2
+    y[0]=a
     for i in range(n-1):
-        k=h*f2(x[i],f1[i],t[i])
-        x[i+1]=x[i]+k[0]
-        f1[i+1]=f1[i]+k[1]
+        df=h*f(x[i],y[i],y1[i])
+        y1[i+1]=y1[i]+df[1]
+        y[i+1]=y[i]+df[0]
+    plt.plot(x,y,'--')
 
-    plt.plot(t,x,'--')
 
-plt.legend()
-plt.grid(True,)
+plt.plot(x,ytr,'--',marker='o',label='original function')
+
 plt.minorticks_on()
-plt.grid(which='major',linewidth='0.5')
-plt.grid(which='minor',linewidth='0.2')
+plt.grid()
+plt.grid(which='minor',linewidth='0.1')
+plt.grid(which='major',linewidth='1')
+plt.legend()
 plt.show()
